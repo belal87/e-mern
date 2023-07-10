@@ -8,4 +8,4 @@ Middleware & Types of Middleware -> body-parser
 Express Error Handling Middleware
 How to handle HTTP errors -> http-errors
 How to secure API -> xss-clean, express-rate-limit
-Environment variable and .gitignore
+Environment env variable and .gitignore -> dotenv

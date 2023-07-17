@@ -14,6 +14,13 @@ const data = {
       phone: "0235677",
       address: "Lisbon, Portugal",
     },
+    {
+      name: "saju",
+      email: "saju@gmail.com",
+      password: "123456",
+      phone: "0235677",
+      address: "Lisbon, Portugal",
+    },
   ],
 };
 

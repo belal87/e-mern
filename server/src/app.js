@@ -21,8 +21,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const userRouter = require("./routers/userRouter");
 const seedRouter = require("./routers/seedRouter");
 
-app.use("/api/seed", seedRouter);
 app.use("/api/users", userRouter);
+app.use("/api/seed", seedRouter);
 
 // client error
 app.use((req, res, next) => {

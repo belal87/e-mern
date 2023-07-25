@@ -16,5 +16,7 @@
 16. GET /api/users -> isAdmin -> getAllUsers ->
     searchByName + pagination functionality
 17. responseHandler controller for error or success
+18. GET /api/users/:id -> get a single user by id
+19. How to create service in the backend
 
 https://api.openweathermap.org/data/2.5/weather?q=dhaka&appid=06e6b331f526d9bfe976cefed804616e

@@ -18,5 +18,16 @@
 17. responseHandler controller for error or success
 18. GET /api/users/:id -> get a single user by id
 19. How to create service in the backend
+20. DELETE /api/users/:id -> delete a single user by id
+21. Refactoring & reusability, dynamic
+22. deleteImage helper
+23. POST /api/users/register -> process the registration
+24. Create JWT -> jsonwebtoken
+25. setup smtp server & prepare email
+26. send email with nodemailer -> nodemailer
+27. POST /api/users/verify -> verify + register into database
+28. add express validator middleware
+29. add multer middleware for file upload
+30. PUT /api/users/:id -> update a single user by id
 
-https://api.openweathermap.org/data/2.5/weather?q=dhaka&appid=06e6b331f526d9bfe976cefed804616e
+    https://api.openweathermap.org/data/2.5/weather?q=dhaka&appid=06e6b331f526d9bfe976cefed804616e

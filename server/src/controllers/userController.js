@@ -1,8 +1,12 @@
 const createError = require("http-errors");
-const fs = require("fs");
+const fs = require("fs").promises;
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { findWithId } = require("../services/findItem");
+const { deleteImage } = require("../helper/deleteImage");
+const { createJSONWebToken } = require("../helper/jsonWebToken");
+const { jwtActivationKey, clientURL } = require("../secret");
+const { emailWithNodeMailer } = require("../helper/email");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -48,11 +52,11 @@ const getUsers = async (req, res, next) => {
   }
 };
 
-const getUser = async (req, res, next) => {
+const getUserById = async (req, res, next) => {
   try {
     const id = req.params.id;
     const options = { password: 0 };
-    const user = await findWithId(id, options);
+    const user = await findWithId(User, id, options);
 
     return successResponse(res, {
       statusCode: 200,
@@ -64,23 +68,15 @@ const getUser = async (req, res, next) => {
   }
 };
 
-const deleteUser = async (req, res, next) => {
+const deleteUserById = async (req, res, next) => {
   try {
     const id = req.params.id;
     const options = { password: 0 };
-    const user = await findWithId(id, options);
+    const user = await findWithId(User, id, options);
 
     const userImagePath = user.image;
-    fs.access(userImagePath, (err) => {
-      if (err) {
-        console.error("user image does not exist");
-      } else {
-        fs.unlink(userImagePath, (err) => {
-          if (err) throw err;
-          console.log("user image was deleted");
-        });
-      }
-    });
+
+    deleteImage(userImagePath);
 
     await User.findByIdAndDelete({
       _id: id,
@@ -96,4 +92,55 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
-module.exports = { getUsers, getUser, deleteUser };
+const processRegister = async (req, res, next) => {
+  try {
+    const { name, email, password, phone, address } = req.body;
+
+    const userExists = await User.exists({ email: email });
+    if (userExists) {
+      throw createError(409, "User email already exits. Please sign in");
+    }
+
+    // create jwt
+    const token = createJSONWebToken(
+      {
+        name,
+        email,
+        password,
+        phone,
+        address,
+      },
+      jwtActivationKey,
+      "10m"
+    );
+
+    // prepare email with jwt
+    const emailData = {
+      email,
+      subject: "Account Activation Email",
+      html: `
+        <h2>Hello ${name} !</h2>
+        <p>Please click here to 
+        <a href="${clientURL}/api/users/activate/${token}" target="_blank">activate your account</a></p>
+      `,
+    };
+
+    // send email with nodemailer
+    try {
+      await emailWithNodeMailer(emailData);
+    } catch (emailError) {
+      next(createError(500, "Failed to send verification email"));
+      return;
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: `Please go to your ${email} for completing your registration process `,
+      payload: { token },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getUsers, getUserById, deleteUserById, processRegister };

@@ -26,8 +26,8 @@
 25. setup smtp server & prepare email
 26. send email with nodemailer -> nodemailer
 27. POST /api/users/verify -> verify + register into database
-28. add express validator middleware
-29. add multer middleware for file upload
+28. add multer middleware for file upload
+29. add express validator middleware
 30. PUT /api/users/:id -> update a single user by id
 
     https://api.openweathermap.org/data/2.5/weather?q=dhaka&appid=06e6b331f526d9bfe976cefed804616e

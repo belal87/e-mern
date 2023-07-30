@@ -1,4 +1,5 @@
 const createError = require("http-errors");
+const jwt = require("jsonwebtoken");
 const fs = require("fs").promises;
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
@@ -127,7 +128,7 @@ const processRegister = async (req, res, next) => {
 
     // send email with nodemailer
     try {
-      await emailWithNodeMailer(emailData);
+      // await emailWithNodeMailer(emailData);
     } catch (emailError) {
       next(createError(500, "Failed to send verification email"));
       return;
@@ -143,4 +144,42 @@ const processRegister = async (req, res, next) => {
   }
 };
 
-module.exports = { getUsers, getUserById, deleteUserById, processRegister };
+const activateUserAccount = async (req, res, next) => {
+  try {
+    const token = req.body.token;
+    if (!token) throw createError(404, "Token not found");
+
+    try {
+      const decoded = jwt.verify(token, jwtActivationKey);
+      if (!decoded) throw createError(401, "Unable to verified user");
+
+      const userExists = await User.exists({ email: decoded.email });
+      if (userExists) {
+        throw createError(409, "User email already exits. Please sign in");
+      }
+      await User.create(decoded);
+      return successResponse(res, {
+        statusCode: 201,
+        message: "User was registered successfully",
+      });
+    } catch (error) {
+      if (error.name === "TokenExpiredError") {
+        throw createError(401, "Token has expired");
+      } else if (error.name === "JsonWebTokenError") {
+        throw createError(401, "Invalid Token");
+      } else {
+        throw error;
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  getUsers,
+  getUserById,
+  deleteUserById,
+  activateUserAccount,
+  processRegister,
+};

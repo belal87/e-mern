@@ -27,7 +27,10 @@
 26. send email with nodemailer -> nodemailer
 27. POST /api/users/verify -> verify + register into database
 28. add multer middleware for file upload
-29. add express validator middleware
-30. PUT /api/users/:id -> update a single user by id
+29. filtering files by size and types
+30. add express validator middleware ->
+    matches (/^(?=._[a-z])(?=._[A-Z])(?=.\_\d)(?[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
+31. storing image as buffer
+32. PUT /api/users/:id -> update a single user by id
 
     https://api.openweathermap.org/data/2.5/weather?q=dhaka&appid=06e6b331f526d9bfe976cefed804616e
